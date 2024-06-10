@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import java.time.Duration;
 import java.time.LocalTime;
-
+import java.time.format.DateTimeFormatter;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
@@ -18,13 +18,14 @@ public class DateAndTime_05_Test {
     public void test_duration() throws Exception {
 
         // TODO créer une heure à 12h30
-        LocalTime time1 = null;
+        LocalTime time1 = LocalTime.parse("12:30", DateTimeFormatter.ofPattern("HH:mm"));
 
         // TODO créer une heure à 16h32
-        LocalTime time2 = null;
+        LocalTime time2 = LocalTime.parse("16:32", DateTimeFormatter.ofPattern("HH:mm"));
 
-        // TODO créer une durée (classe java.time.Duration) qui représente le temps entre les heures précédentes
-        Duration duration = null;
+        // TODO créer une durée (classe java.time.Duration) qui représente le temps
+        // entre les heures précédentes
+        Duration duration = Duration.between(time1, time2);
 
         assertThat(duration.toMinutes(), is(242L));
         assertThat(duration.toHours(), is(4L));
@@ -35,6 +36,5 @@ public class DateAndTime_05_Test {
     }
 
     // Duration
-
 
 }
