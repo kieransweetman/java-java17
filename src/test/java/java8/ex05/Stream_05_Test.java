@@ -12,7 +12,6 @@ import java.util.stream.Stream;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
-
 /**
  * Exercice 06 - Stream Parallel
  */
@@ -20,7 +19,8 @@ public class Stream_05_Test {
 
     private static final long NB = 10_000_000;
 
-    // Soit une méthode impérative qui permet de construire une somme des chiffres de 1 à n
+    // Soit une méthode impérative qui permet de construire une somme des chiffres
+    // de 1 à n
     private long imperativeSum(long n) {
         long result = 0;
 
@@ -30,14 +30,14 @@ public class Stream_05_Test {
         return result;
     }
 
-    // TODO compléter la méthode iterateSum
-    // TODO utiliser la méthode Stream.iterate
-    // TODO cette méthode doit produire le même résultat que imperativeSum
     private long iterateSum(long n) {
-        return 0;
+        return Stream.iterate(1L, i -> i + 1)
+                .limit(n - 1)
+                .reduce(0L, Long::sum);
     }
 
-    // TODO exécuter le test pour vérifier que les méthodes imperativeSum et iterateSum produisent le même résultat
+    // TODO exécuter le test pour vérifier que les méthodes imperativeSum et
+    // iterateSum produisent le même résultat
     @Test
     public void test_imperativeSum_vs_iterateSum() {
 
@@ -53,10 +53,14 @@ public class Stream_05_Test {
     // TODO utiliser la méthode Stream.iterate
     // TODO transformer en stream parallel (.parallel())
     private long parallelIterateSum(long n) {
-        return 0;
+        return Stream.iterate(1L, i -> i + 1)
+                .limit(n - 1)
+                .parallel()
+                .reduce(0L, Long::sum);
     }
 
-    // TODO exécuter le test pour vérifier que les méthodes imperativeSum, iterateSum et parallelIterateSum produisent le même résultat
+    // TODO exécuter le test pour vérifier que les méthodes imperativeSum,
+    // iterateSum et parallelIterateSum produisent le même résultat
     @Test
     public void test_imperativeSum_vs_iterateSum_vs_parallelIterateSum() {
 
@@ -70,9 +74,11 @@ public class Stream_05_Test {
         });
     }
 
-    // Essayons maintenant d'avoir une indication sur les performances des 3 traitements
+    // Essayons maintenant d'avoir une indication sur les performances des 3
+    // traitements
 
-    // Voici une méthode qui exécute 10 fois un traitement et retourne le meilleur temps (le plus court)
+    // Voici une méthode qui exécute 10 fois un traitement et retourne le meilleur
+    // temps (le plus court)
     private long monitor(Consumer<Long> fn, long n) {
 
         long fastest = Long.MAX_VALUE;
@@ -82,7 +88,8 @@ public class Stream_05_Test {
             fn.accept(n);
             long end = System.nanoTime();
             long duration = (end - start) / 1_000_000;
-            if (duration < fastest) fastest = duration;
+            if (duration < fastest)
+                fastest = duration;
         }
         return fastest;
     }
@@ -91,9 +98,9 @@ public class Stream_05_Test {
     // TODO visualiser les temps d'exécution
     @Test
     public void monitor_imperativeSum_vs_iterateSum_vs_parallelIterateSum() {
-        Logger.getAnonymousLogger().info("imperativeSum => " + /* TODO */" ms");
-        Logger.getAnonymousLogger().info("iterateSum => " + /* TODO */" ms");
-        Logger.getAnonymousLogger().info("parallelIterateSum => " + /* TODO */ " ms");
+        Logger.getAnonymousLogger().info("imperativeSum => " + monitor(this::imperativeSum, NB) + " ms");
+        Logger.getAnonymousLogger().info("iterateSum => " + monitor(this::iterateSum, NB) + " ms");
+        Logger.getAnonymousLogger().info("parallelIterateSum => " + monitor(this::parallelIterateSum, NB) + " ms");
     }
 
     // Quel résultat obtenez-vous ?
@@ -107,7 +114,7 @@ public class Stream_05_Test {
     // TODO compléter la méthode rangeSum
     // TODO utiliser la méthode LongStream.rangeClosed
     private long rangeSum(long n) {
-        return 0;
+        return LongStream.rangeClosed(1, n - 1).sum();
     }
 
     // TODO vérifier que l'implémentation de rangeSum
@@ -126,7 +133,7 @@ public class Stream_05_Test {
     // TODO utiliser la méthode LongStream.rangeClosed
     // TODO transformer en stream parallel (.parallel())
     private long rangeParallelSum(long n) {
-        return 0;
+        return LongStream.rangeClosed(1, n - 1).parallel().sum();
     }
 
     // TODO vérifier que l'implémentation de rangeParallelSum
@@ -145,11 +152,11 @@ public class Stream_05_Test {
 
     @Test
     public void monitor_imperativeSum_vs_iterateSum_vs_parallelIterateSum_vs_rangeSum_vs_rangeParallelSum() {
-        Logger.getAnonymousLogger().info("imperativeSum => " + /* TODO */ " ms");
-        Logger.getAnonymousLogger().info("iterateSum => " + /* TODO */ " ms");
-        Logger.getAnonymousLogger().info("parallelIterateSum => " + /* TODO */ " ms");
-        Logger.getAnonymousLogger().info("rangeSum => " + /* TODO */" ms");
-        Logger.getAnonymousLogger().info("rangeParallelSum => " /* TODO */ + " ms");
+        Logger.getAnonymousLogger().info("imperativeSum => " + monitor(this::imperativeSum, NB) + " ms");
+        Logger.getAnonymousLogger().info("iterateSum => " + monitor(this::iterateSum, NB) + " ms");
+        Logger.getAnonymousLogger().info("parallelIterateSum => " + monitor(this::parallelIterateSum, NB) + " ms");
+        Logger.getAnonymousLogger().info("rangeSum => " + monitor(this::rangeSum, NB) + " ms");
+        Logger.getAnonymousLogger().info("rangeParallelSum => " + monitor(this::rangeParallelSum, NB) + " ms");
     }
 
     // Quel résultat obtenez-vous ?
@@ -160,7 +167,9 @@ public class Stream_05_Test {
     // INFO: rangeSum => 4 ms
     // INFO: rangeParallelSum => 1 ms
 
-    // Les performances de traitements en parallèle dépendent de la capacité d'une structure à se décomposer.
-    // Stream.iterate() conçu pour générer un flux continue infinie ne se décompose pas alors qu'une structure finie comme
+    // Les performances de traitements en parallèle dépendent de la capacité d'une
+    // structure à se décomposer.
+    // Stream.iterate() conçu pour générer un flux continue infinie ne se décompose
+    // pas alors qu'une structure finie comme
     // LongStream.rangeClosed se décompose aisément.
 }
